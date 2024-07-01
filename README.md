@@ -102,7 +102,7 @@ Após a sua transação ser validada, você poderá enviar essa criptomoeda para
 
 ## Enviando criptomoedas
 
-1. Repita o [seguinte passo ](executando-o-projeto).
+1. Repita o [seguinte passo ](#executando-o-projeto).
 
 2. Copie o novo endereço gerado.
 
