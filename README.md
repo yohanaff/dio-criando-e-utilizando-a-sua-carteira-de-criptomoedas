@@ -114,6 +114,6 @@ Após a sua transação ser validada, você poderá enviar essa criptomoeda para
 
 Em seguida, você vai receber a mensagem de que o pagamento foi enviado:
 
-![Electrum - Enviando criptomoedas: Pagamento enviado](image.png)
+![Electrum - Enviando criptomoedas: Pagamento enviado](images/electrum-16.png)
 
 Após a transação ser confirmada, você poderá vê-la no buscador de blocos :)
