@@ -1,75 +1,75 @@
-<h>README - Gerador de Carteira Bitcoin com Hierarquia Determinística (HD)</h>
+## README - Gerador de Carteira Bitcoin com Hierarquia Determinística (HD)
 
 Este repositório contém um exemplo simples de como gerar uma carteira Bitcoin utilizando Hierarquia Determinística (HD) usando Node.js e as bibliotecas bip32, bip39 e bitcoinjs-lib.
 
-<h>Pré-requisitos:</h>
+## Pré-requisitos:
 
 Certifique-se de ter o Node.js instalado na sua máquina.
 
-<h>Instalação</h>
+## Instalação:
 
 1. Clone este repositório:
 
 git clone [https://github.com/yohanaff/dio-criando-e-utilizando-a-sua-carteira-de-criptomoedas.git]
 
-<h>Instale as dependências necessárias:</h>
+## Instale as dependências necessárias:
 
 npm install bip32 bip39 bitcoinjs-lib
 
-<h>Uso</h>
+## Uso
 
 Execute o script createWallet.js para gerar uma carteira Bitcoin no Testnet:
 
 node createWallet.js
 
-<h>Detalhes do Código:</h>
+## Detalhes do Código:
 
 O script createWallet.js realiza os seguintes passos:
 
-Importa as bibliotecas necessárias:
+## Importa as bibliotecas necessárias:
 
 const bip32 = require('bip32');
 const bip39 = require('bip39');
 const bitcoin = require('bitcoinjs-lib');
 
-Define a rede de Bitcoin como Testnet (rede de testes da blockchain do Bitcoin):
+## Define a rede de Bitcoin como Testnet (rede de testes da blockchain do Bitcoin):
 
 const network = bitcoin.networks.testnet;
 
-Define o caminho para a derivação HD:
+## Define o caminho para a derivação HD:
 
 const path = `m/49'/1'/0'/0`;
 
-Gera um mnemonic (palavras de senha) para a seed da carteira:
+## Gera um mnemonic (senha) para a seed da carteira:
 
 let mnemonic = bip39.generateMnemonic();
 const seed = bip39.mnemonicToSeedSync(mnemonic);
 
-Cria a raiz da carteira HD a partir da seed:
+## Cria a raiz da carteira HD a partir da seed:
 
 let root = bip32.fromSeed(seed, network);
 
-Deriva uma conta específica usando o caminho definido:
+## Deriva uma conta específica usando o caminho definido:
 
 let account = root.derivePath(path);
 let node = account.derive(0).derive(0);
 
-Gera o endereço Bitcoin e exibe no console:
+## Gera o endereço Bitcoin e exibe no console:
 
 let btcAddress = bitcoin.payments.p2pkh({
     pubkey: node.publicKey,
     network: network,
 }).address;
 
-
-Exibe a mensagem "Carteira gerada" no console, assim como as informações referentes à carteira criada, como o endereço (btcAddress), a chave privada (node.toWIF), e a seed (mnemonic):
+## Exibe a mensagem "Carteira gerada" no console, assim como as informações referentes à carteira criada, como o endereço (btcAddress), a chave privada (node.toWIF), e a seed (mnemonic):
 
 console.log("Carteira gerada");
 console.log("Endereço: ", btcAddress);
 console.log("Chave privada: ", node.toWIF());
 console.log("Seed: ", mnemonic);
 
-<h>Notas</h>
+## Notas:
+
 Este exemplo utiliza a biblioteca bitcoinjs-lib para operações relacionadas à carteira Bitcoin.
 O script gera um endereço e uma chave privada válidos para a rede Testnet do Bitcoin.
 Guarde com segurança o mnemonic gerado, pois ele é crucial para restaurar a carteira no futuro.
