@@ -1,119 +1,110 @@
-# Criando e utilizando a sua primeira carteira de criptomoedas
+## README - Gerador de Carteira Bitcoin com Hierarquia Determinística (HD)
 
-Nesse desafio vamos criar um gerador de carteiras bitcoin, utilizando pares de chave pública e privada. Você irá desenvolver um gerador para criar endereços de depósito e de envio de bitcoin para a carteira gerada. Além disso, vamos importar essa carteira dentro do Electrum, um aplicativo desktop pra enviar e receber transações em bitcoin, e por fim enviar criptomoedas.
+Este repositório contém um exemplo simples de como gerar uma carteira Bitcoin utilizando Hierarquia Determinística (HD) usando Node.js e as bibliotecas bip32, bip39 e bitcoinjs-lib.
 
-## Requisitos
+## Pré-requisitos:
 
-Para executar o gerador de carteiras bitcoin e importá-las no Electrum, você precisará ter os seguintes requisitos instalados em seu sistema:
+Certifique-se de ter o Node.js instalado na sua máquina.
 
-- Node.js versão 16 ou superior
-- npm (Node Package Manager)
-- Electrum (aplicativo desktop para enviar e receber transações em bitcoin)
+## Instalação:
 
-Certifique-se de ter esses requisitos instalados antes de prosseguir.
+1. Clone este repositório:
 
-## Clonando o repositório
+git clone [https://github.com/yohanaff/dio-criando-e-utilizando-a-sua-carteira-de-criptomoedas.git]
 
-```
-git clone https://github.com/yohanaff/dio-criando-e-utilizando-a-sua-carteira-de-criptomoedas.git
-```
-## Executando o projeto
+## Instale as dependências necessárias:
 
-```
-cd src
+npm install bip32 bip39 bitcoinjs-lib
+
+## Uso
+
+Execute o script createWallet.js para gerar uma carteira Bitcoin no Testnet:
+
 node createWallet.js
-```
-O output será a carteira gerada, junto com o seu endereço, chave privada e seed.
 
-## Importando a carteira no Electrum
+## Detalhes do Código:
 
-1. Abra o Electrum e clique em "Criar uma nova carteira"
-![Electrum - Passo 01](images/electrum-01.png)
+O script createWallet.js realiza os seguintes passos:
 
-2. Dê um nome à carteira e clique em "Próximo"
-![Electrum - Passo 02](images/electrum-02.png)
+## Importa as bibliotecas necessárias:
 
-3. Selecione "Carteira padrão" e clique em "Próximo"
-![Electrum - Passo 03](images/electrum-03.png)
+const bip32 = require('bip32');
+const bip39 = require('bip39');
+const bitcoin = require('bitcoinjs-lib');
 
-4. Selecione "Crie uma nova semente" e clique em "Próximo"
-![Electrum - Passo 04](images/electrum-04.png)
+## Define a rede de Bitcoin como Testnet (rede de testes da blockchain do Bitcoin):
 
-5. Selecione o texto (seed) e copie para um bloco de notas. Clique em "Próximo".
-![Electrum - Passo 05](images/electrum-05.png)
+const network = bitcoin.networks.testnet;
 
-6. Escreva o texto (seed) copiado no bloco abaixo e clique em "Próximo"
-![Electrum - Passo 06](images/electrum-06.png)
+## Define o caminho para a derivação HD:
 
-7. Digite uma senha e clique em "Finalizar"
-![Electrum - Passo 07](images/electrum-07.png)
+const path = `m/49'/1'/0'/0`;
 
-8. Pronto! Você criou a sua carteira dentro do Electrum.
-![Electrum - Passo 08](images/electrum-08.png)
+## Gera um mnemonic (senha) para a seed da carteira:
 
+let mnemonic = bip39.generateMnemonic();
+const seed = bip39.mnemonicToSeedSync(mnemonic);
 
-## Buscando o seu bloco em um buscador de blocos. 
+## Cria a raiz da carteira HD a partir da seed:
 
-Acesse o [blockchain.com](https://www.blockchain.com/explorer) ou [blockexplorer.one](https://blockexplorer.one/). Abaixo há um exemplo usando a segunda alternativa:
+let root = bip32.fromSeed(seed, network);
 
-1. Clique no ícone do Bitcoin.
+## Deriva uma conta específica usando o caminho definido:
+
+let account = root.derivePath(path);
+let node = account.derive(0).derive(0);
+
+## Gera o endereço Bitcoin e exibe no console:
+
+let btcAddress = bitcoin.payments.p2pkh({
+    pubkey: node.publicKey,
+    network: network,
+}).address;
+
+## Exibe a mensagem "Carteira gerada" no console, assim como as informações referentes à carteira criada, como o endereço (btcAddress), a chave privada (node.toWIF), e a seed (mnemonic):
+
+console.log("Carteira gerada");
+console.log("Endereço: ", btcAddress);
+console.log("Chave privada: ", node.toWIF());
+console.log("Seed: ", mnemonic);
+
+## Notas:
+
+Este exemplo utiliza a biblioteca bitcoinjs-lib para operações relacionadas à carteira Bitcoin.
+O script gera um endereço e uma chave privada válidos para a rede Testnet do Bitcoin.
+Guarde com segurança o mnemonic gerado, pois ele é crucial para restaurar a carteira no futuro.
+
+![Screenshot](https://github.com/user-attachments/assets/debd4e45-26ba-473d-8a2b-26c81c74fd6a)
+
+## Buscando o meu bloco em um buscador de blocos. 
+
+Acessei o blockexplorer.one [blockexplorer.one](https://blockexplorer.one/).
+
+1. Cliquei no ícone do Bitcoin.
 ![BlockExplorer.one - Passo 01](images/blockexplorer-01.png)
 
-2. Digite no buscador o endereço da sua carteira.
-![BlockExplorer.one - Passo 02](images/blockexplorer-02.png)
+2. Digitei no buscador o endereço da minha carteira.
 
-Observe que ali há um alerta falando que é um endereço testnet.
-![BlockExplorer.one - Exemplo](images/blockexplorer-03.png)
+Observei que ali há um alerta falando que se trata um endereço testnet.
 
-Observe também que não há nenhuma transação e o saldo está zerado.
+Observei também que não há nenhuma transação e o saldo está zerado.
+
+![Screen Shot 2024-07-14 at 12 16 22](https://github.com/user-attachments/assets/84ca764e-1e27-4963-9226-3b9a2dd070f2)
 
 ## Obtendo faucets (criptomoedas de teste)
 
-1. Acesse [coinfaucet.eu](https://coinfaucet.eu/).
+1. Acessei [coinfaucet.eu](https://coinfaucet.eu/).
 
-2. Coloque o endereço da sua carteira.
-![coinfaucet.net - Passo 02](images/coinfaucet-01.png)
+2. Coloquei o endereço da minha carteira.
 
-Mostrará uma tela como esta:
-![coinfaucet.net - Exemplo](images/coinfaucet-02.png)
+Mostrou uma tela como esta:
 
-Agora você pode atualizar a página do seu buscador de blocos e verificar que há uma transação feita:
+![Screen Shot 2024-07-14 at 12 16 52](https://github.com/user-attachments/assets/c265367b-06e1-4779-88d3-6ecaf41c5c3d)
 
-![BlockExplorer.one - Print mostrando a transação feita](images/blockexplorer-04.png)
+## Confirmando a transação (criptomoedas de teste)
 
-## Ativando a testnet no Electrum
+Acessei o live.blockcypher.com/btc-testnet/
 
-1. Abra o Electrum Testnet e crie uma nova carteira; clique em "Próximo".
-![Electrum - Ativando a testnet: Passo 01](images/electrum-09.png)
+E inseri o código tx da transação realizada.
 
-2. Selecione "Importar endereços Bitcoin ou chaves privadas".
-![Electrum - Ativando a testnet: Passo 02](images/electrum-10.png)
-
-3. Copie a chave privada da sua carteira e cole no campo abaixo.
-![Electrum - Ativando a testnet: Passo 03](images/electrum-11.png)
-
-4. Crie uma senha e clique em finalizar.
-![Electrum - Ativando a testnet: Passo 04](images/electrum-12.png)
-
-Você verá um alerta avisando que você está no modo de teste, clique em "OK". Agora você poderá ver a transação feita anteriormente.
-![Electrum - Ativando a testnet: Exemplo](images/electrum-13.png)
-
-Após a sua transação ser validada, você poderá enviar essa criptomoeda para outras carteiras.
-
-## Enviando criptomoedas
-
-1. Repita o [seguinte passo ](#executando-o-projeto).
-
-2. Copie o novo endereço gerado.
-
-3. Clique na tab "Enviar" e cole o endereço que você copiou. Escolha a quantidade de criptomoedas que vai enviar; clique em "Pagar".
-![Electrum - Enviando criptomoedas: Passo 03](images/electrum-14.png)
-
-4. Escolha a taxa de transação (quanto maior, mais rápida), clique em "Concluído" e digite a sua senha.
-![Electrum - Enviando criptomoedas: Passo 04](images/electrum-15.png)
-
-Em seguida, você vai receber a mensagem de que o pagamento foi enviado:
-
-![Electrum - Enviando criptomoedas: Pagamento enviado](images/electrum-16.png)
-
-Após a transação ser confirmada, você poderá vê-la no buscador de blocos :)
+![Screen Shot 2024-07-14 at 12 18 31](https://github.com/user-attachments/assets/14975789-170f-4cd9-8eda-a55a0d9337cc)
